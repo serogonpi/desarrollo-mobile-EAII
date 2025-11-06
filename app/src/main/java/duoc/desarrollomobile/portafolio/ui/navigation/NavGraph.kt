@@ -40,45 +40,5 @@ fun NavGraph(navController: NavHostController) {
         composable(route = Screen.Contact.route) {
             ContactScreen(navController = navController)
         }
-
-        // Pantalla Project Detail (con parámetro)
-        composable(
-            route = Screen.ProjectDetail.route,
-            arguments = listOf(
-                navArgument("projectId") {
-                    type = NavType.IntType
-                }
-            )
-        ) { backStackEntry ->
-            val projectId = backStackEntry.arguments?.getInt("projectId") ?: 0
-            // ProjectDetailScreen(navController = navController, projectId = projectId)
-            // Por ahora comentado, lo crearemos después
-        }
-
-        // Pantalla Post Detail (con parámetro)
-        composable(
-            route = Screen.PostDetail.route,
-            arguments = listOf(
-                navArgument("postId") {
-                    type = NavType.IntType
-                }
-            )
-        ) { backStackEntry ->
-            val postId = backStackEntry.arguments?.getInt("postId") ?: 0
-            // PostDetailScreen(navController = navController, postId = postId)
-            // Por ahora comentado, lo crearemos después
-        }
-
-        // Pantalla Add Project
-        composable(route = Screen.AddProject.route) {
-            // AddProjectScreen(navController = navController)
-            // Por ahora comentado, lo crearemos después
-        }
-
-        // Pantalla Add Post
-        composable(route = Screen.AddPost.route) {
-            // AddPostScreen(navController = navController)
-            // Por ahora comentado, lo crearemos después
-        }
     }
 }

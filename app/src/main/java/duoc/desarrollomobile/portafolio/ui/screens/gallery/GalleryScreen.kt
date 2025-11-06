@@ -1,7 +1,6 @@
 package duoc.desarrollomobile.portafolio.ui.screens.gallery
 
 import android.Manifest
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
@@ -26,6 +25,10 @@ import duoc.desarrollomobile.portafolio.utils.CameraHelper
 import duoc.desarrollomobile.portafolio.utils.PermissionHelper
 import duoc.desarrollomobile.portafolio.viewmodel.ProjectViewModel
 import java.io.File
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 
 /**
  * Pantalla de galería de proyectos
@@ -167,20 +170,6 @@ fun GalleryScreen(
                 }
             )
         }
-
-        // Snackbar para mensajes
-        message?.let {
-            Snackbar(
-                modifier = Modifier.padding(16.dp),
-                action = {
-                    TextButton(onClick = { viewModel.clearMessage() }) {
-                        Text("OK")
-                    }
-                }
-            ) {
-                Text(it)
-            }
-        }
     }
 }
 
@@ -226,10 +215,14 @@ fun ProjectCard(
     onDeleteClick: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        onClick = { /* Navegar a detalles */ }
+        onClick = {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1"))
+            context.startActivity(intent)
+        }
     ) {
         Column {
             // Imagen del proyecto

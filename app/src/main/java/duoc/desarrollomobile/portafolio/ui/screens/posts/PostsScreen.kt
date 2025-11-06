@@ -31,19 +31,11 @@ fun PostsScreen(
     viewModel: PostViewModel = viewModel()
 ) {
     val posts by viewModel.publishedPosts.collectAsState()
-    val message by viewModel.message.collectAsState()
     val selectedTag by viewModel.selectedTag.collectAsState()
 
     var showAddDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var showSearchBar by remember { mutableStateOf(false) }
-
-    // Mostrar mensajes
-    LaunchedEffect(message) {
-        message?.let {
-            viewModel.clearMessage()
-        }
-    }
 
     Scaffold(
         floatingActionButton = {
@@ -182,20 +174,6 @@ fun PostsScreen(
                     showAddDialog = false
                 }
             )
-        }
-
-        // Snackbar para mensajes
-        message?.let {
-            Snackbar(
-                modifier = Modifier.padding(16.dp),
-                action = {
-                    TextButton(onClick = { viewModel.clearMessage() }) {
-                        Text("OK")
-                    }
-                }
-            ) {
-                Text(it)
-            }
         }
     }
 }

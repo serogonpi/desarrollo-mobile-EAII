@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -106,7 +107,7 @@ fun WelcomeSection() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "¡Bienvenido a mi Portafolio!",
+                text = "¡Bienvenido a nuestro Portafolio!",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -116,7 +117,7 @@ fun WelcomeSection() {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Desarrollador Full Stack",
+                text = "Desarrolladores Full Stack y Mobile",
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
@@ -125,8 +126,8 @@ fun WelcomeSection() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Apasionado por crear soluciones tecnológicas innovadoras y funcionales. " +
-                        "Especializado en desarrollo móvil y web.",
+                text = "Apasionados por crear soluciones tecnológicas innovadoras y funcionales. " +
+                        "Especializados en desarrollo móvil y web.",
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
@@ -156,7 +157,7 @@ fun StatsSection() {
         StatCard(
             icon = Icons.Default.Star,
             number = "5+",
-            label = "Tecnologías"
+            label = "Técnologias"
         )
     }
 }
@@ -168,7 +169,7 @@ fun StatCard(
     label: String
 ) {
     Card(
-        modifier = Modifier.width(100.dp)
+        modifier = Modifier.width(110.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -210,7 +211,7 @@ fun QuickAccessSection(navController: NavController) {
         QuickAccessCard(
             icon = Icons.Default.PhotoLibrary,
             title = "Ver Galería",
-            description = "Explora mis proyectos",
+            description = "Explora nuestros proyectos",
             onClick = { navController.navigate(Screen.Gallery.route) }
         )
 
@@ -228,7 +229,7 @@ fun QuickAccessSection(navController: NavController) {
         QuickAccessCard(
             icon = Icons.Default.ContactMail,
             title = "Contactar",
-            description = "Envíame un mensaje",
+            description = "Envíanos un mensaje",
             onClick = { navController.navigate(Screen.Contact.route) }
         )
     }
@@ -297,9 +298,9 @@ fun SkillsSection() {
         val skills = listOf(
             "Kotlin" to 0.9f,
             "Android" to 0.85f,
-            "Jetpack Compose" to 0.8f,
+            "Python" to 0.8f,
             "React" to 0.75f,
-            "Firebase" to 0.7f
+            "Java" to 0.7f
         )
 
         skills.forEach { (skill, progress) ->
