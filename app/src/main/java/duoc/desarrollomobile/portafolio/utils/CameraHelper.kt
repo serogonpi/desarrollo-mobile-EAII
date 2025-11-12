@@ -45,26 +45,4 @@ object CameraHelper {
         val uri = getImageUri(context, file)
         return Pair(uri, file)
     }
-
-    /**
-     * Elimina un archivo de imagen
-     */
-    fun deleteImageFile(file: File): Boolean {
-        return try {
-            if (file.exists()) {
-                file.delete()
-            } else {
-                false
-            }
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    /**
-     * Verifica si un archivo de imagen existe
-     */
-    fun imageFileExists(file: File): Boolean {
-        return file.exists() && file.length() > 0
-    }
 }

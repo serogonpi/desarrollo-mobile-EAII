@@ -114,23 +114,4 @@ class LocationHelper(private val context: Context) {
             onFailure("Error de seguridad al acceder a la ubicación")
         }
     }
-
-    /**
-     * Formatea coordenadas para mostrar
-     */
-    fun formatCoordinates(latitude: Double, longitude: Double): String {
-        return "Lat: %.6f, Lng: %.6f".format(latitude, longitude)
-    }
-
-    /**
-     * Calcula la distancia entre dos puntos en metros
-     */
-    fun calculateDistance(
-        lat1: Double, lng1: Double,
-        lat2: Double, lng2: Double
-    ): Float {
-        val results = FloatArray(1)
-        Location.distanceBetween(lat1, lng1, lat2, lng2, results)
-        return results[0]
-    }
 }

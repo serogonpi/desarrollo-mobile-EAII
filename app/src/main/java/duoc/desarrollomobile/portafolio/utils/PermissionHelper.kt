@@ -57,18 +57,4 @@ object PermissionHelper {
     fun hasLocationPermission(context: Context): Boolean {
         return hasPermissions(context, LOCATION_PERMISSIONS)
     }
-
-    /**
-     * Verifica permisos de almacenamiento
-     */
-    fun hasStoragePermission(context: Context): Boolean {
-        return hasPermissions(context, STORAGE_PERMISSIONS)
-    }
-
-    /**
-     * Obtiene los permisos que faltan de un array
-     */
-    fun getMissingPermissions(context: Context, permissions: Array<String>): Array<String> {
-        return permissions.filter { !hasPermission(context, it) }.toTypedArray()
-    }
 }
