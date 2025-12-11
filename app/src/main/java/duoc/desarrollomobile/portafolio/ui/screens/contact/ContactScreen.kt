@@ -25,7 +25,7 @@ import duoc.desarrollomobile.portafolio.viewmodel.ContactViewModel
 
 /**
  * Pantalla de contacto
- * Formulario completo con validaciones y acceso a GPS (recurso nativo)
+ * Formulario completo con validaciones, acceso a GPS y conexión a API REST
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,8 +40,15 @@ fun ContactScreen(
     val formName by viewModel.formName.collectAsState()
     val formEmail by viewModel.formEmail.collectAsState()
     val formPhone by viewModel.formPhone.collectAsState()
+    val formCompany by viewModel.formCompany.collectAsState() // ✅ NUEVO
     val formSubject by viewModel.formSubject.collectAsState()
     val formMessage by viewModel.formMessage.collectAsState()
+
+    // ✅ NUEVO: Estados de la API
+    val tiposProyecto by viewModel.tiposProyecto.collectAsState()
+    val presupuestos by viewModel.presupuestos.collectAsState()
+    val selectedTipoProyecto by viewModel.selectedTipoProyecto.collectAsState()
+    val selectedPresupuesto by viewModel.selectedPresupuesto.collectAsState()
 
     // Estados de error
     val nameError by viewModel.nameError.collectAsState()
@@ -66,13 +73,16 @@ fun ContactScreen(
     var locationError by remember { mutableStateOf<String?>(null) }
     var showSuccessDialog by remember { mutableStateOf(false) }
 
+    // ✅ NUEVO: Estados para los dropdowns
+    var expandedTipoProyecto by remember { mutableStateOf(false) }
+    var expandedPresupuesto by remember { mutableStateOf(false) }
+
     // Launcher para permisos de ubicación
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         hasLocationPermission = permissions.values.all { it }
         if (hasLocationPermission) {
-            // Obtener ubicación automáticamente después de conceder permiso
             isLoadingLocation = true
             locationHelper.getLastLocation(
                 onSuccess = { lat, lng ->
@@ -340,6 +350,139 @@ fun ContactScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+            // ✅ NUEVO: Campo Empresa
+            OutlinedTextField(
+                value = formCompany,
+                onValueChange = { viewModel.updateFormCompany(it) },
+                label = { Text("Empresa (opcional)") },
+                placeholder = { Text("Mi Empresa S.A.") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(Icons.Default.Business, contentDescription = null)
+                },
+                singleLine = true,
+                enabled = !isLoading
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ✅ NUEVO: Dropdown Tipo de Proyecto
+            ExposedDropdownMenuBox(
+                expanded = expandedTipoProyecto,
+                onExpandedChange = { expandedTipoProyecto = !expandedTipoProyecto && !isLoading }
+            ) {
+                OutlinedTextField(
+                    value = tiposProyecto.find { it.codigo == selectedTipoProyecto }?.nombre ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Tipo de Proyecto *") },
+                    placeholder = { Text("Selecciona un tipo") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTipoProyecto)
+                    },
+                    leadingIcon = {
+                        Icon(Icons.Default.WorkOutline, contentDescription = null)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    enabled = !isLoading,
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expandedTipoProyecto,
+                    onDismissRequest = { expandedTipoProyecto = false }
+                ) {
+                    if (tiposProyecto.isEmpty()) {
+                        DropdownMenuItem(
+                            text = { Text("Cargando...") },
+                            onClick = { }
+                        )
+                    } else {
+                        tiposProyecto.forEach { tipo ->
+                            DropdownMenuItem(
+                                text = { Text(tipo.nombre) },
+                                onClick = {
+                                    viewModel.updateTipoProyecto(tipo.codigo)
+                                    expandedTipoProyecto = false
+                                },
+                                leadingIcon = {
+                                    if (tipo.codigo == selectedTipoProyecto) {
+                                        Icon(Icons.Default.Check, contentDescription = null)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ✅ NUEVO: Dropdown Presupuesto
+            ExposedDropdownMenuBox(
+                expanded = expandedPresupuesto,
+                onExpandedChange = { expandedPresupuesto = !expandedPresupuesto && !isLoading }
+            ) {
+                OutlinedTextField(
+                    value = presupuestos.find { it.codigo == selectedPresupuesto }?.nombre ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Presupuesto (opcional)") },
+                    placeholder = { Text("Selecciona un rango") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedPresupuesto)
+                    },
+                    leadingIcon = {
+                        Icon(Icons.Default.AttachMoney, contentDescription = null)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    enabled = !isLoading,
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expandedPresupuesto,
+                    onDismissRequest = { expandedPresupuesto = false }
+                ) {
+                    if (presupuestos.isEmpty()) {
+                        DropdownMenuItem(
+                            text = { Text("Cargando...") },
+                            onClick = { }
+                        )
+                    } else {
+                        // Opción para limpiar selección
+                        DropdownMenuItem(
+                            text = { Text("Ninguno") },
+                            onClick = {
+                                viewModel.updatePresupuesto("")
+                                expandedPresupuesto = false
+                            }
+                        )
+
+                        presupuestos.forEach { presupuesto ->
+                            DropdownMenuItem(
+                                text = { Text(presupuesto.nombre) },
+                                onClick = {
+                                    viewModel.updatePresupuesto(presupuesto.codigo)
+                                    expandedPresupuesto = false
+                                },
+                                leadingIcon = {
+                                    if (presupuesto.codigo == selectedPresupuesto) {
+                                        Icon(Icons.Default.Check, contentDescription = null)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             // Campo: Asunto
             OutlinedTextField(
                 value = formSubject,
@@ -406,7 +549,7 @@ fun ContactScreen(
             Button(
                 onClick = { viewModel.submitContactForm() },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !isLoading
+                enabled = !isLoading && selectedTipoProyecto != null
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
@@ -420,6 +563,35 @@ fun ContactScreen(
                     Icon(Icons.Default.Send, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Enviar Mensaje")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // ✅ NUEVO: Indicador de estado de conexión
+            if (tiposProyecto.isEmpty() || presupuestos.isEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "No se pudieron cargar los datos del servidor. Verifica tu conexión.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
                 }
             }
 
