@@ -39,6 +39,26 @@ android {
     buildFeatures {
         compose = true
     }
+    signingConfigs {
+        create("release") {
+            storeFile = file("../portafolio-release.jks") // ruta al keystore
+            storePassword = "TU_PASSWORD_KEYSTORE"
+            keyAlias = "portafolio"
+            keyPassword = "TU_PASSWORD_ALIAS"
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true  // Optimización: reduce tamaño del APK
+            isShrinkResources = true  // Elimina recursos no usados
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")  // ← Importante
+        }
+    }
 }
 
 dependencies {
@@ -81,13 +101,13 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // Testing
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation("junit:junit:4.13.2")
 
     // Retrofit - Cliente HTTP
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
